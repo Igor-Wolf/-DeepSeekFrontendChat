@@ -1,0 +1,28 @@
+/* Define variáveis globais para cores ou outros valores no :root */
+:root {
+  /* background-color: #141414; */
+  /* color: white; */
+  
+}
+
+/* Estilos globais para todos os elementos */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  vertical-align: baseline;
+  list-style: none;
+  scrollbar-width: thin; /* Aplicado apenas em navegadores compatíveis, como Firefox */
+  text-decoration: none;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Estilos para o body */
+body {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  
+}
