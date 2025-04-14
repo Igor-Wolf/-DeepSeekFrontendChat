@@ -25,10 +25,25 @@ export default function Home() {
 
     // Atualizando o estado com a nova lista de mensagens
     setDataChat(lista);
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth' // ou 'auto' se não quiser animação
+    });
 
     const bodyValue = {
       model: "deepseek-r1:14b",
       messages: lista, // Enviando as mensagens atualizadas
+      system:
+        "Responda sempre na linguagem Português do Brasil. Responda em Text",
+      format: {
+        type: "object",
+        properties: {
+          content: {
+            type: "string",
+          },
+        },
+        required: ["content"],
+      },
     };
 
     try {
@@ -53,7 +68,8 @@ export default function Home() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let done = false;
-      let converter
+      let converter;
+      let auxi2;
 
       while (!done) {
         // Lê o próximo "chunk" de dados
@@ -62,20 +78,29 @@ export default function Home() {
 
         // Decodificando o "chunk" de bytes para texto
         const chunk = decoder.decode(value, { stream: true });
-        
-        converter = JSON.parse('[' + chunk + ']')
+
+        converter = JSON.parse("[" + chunk + "]");
         // Acumula a resposta recebida até o momento
-        accumulatedResponse += converter[0].message.content ;
+        accumulatedResponse += converter[0].message.content;
         
-        // Atualizando a última mensagem do assistente com a resposta acumulada
-        lista[lista.length - 1].content = accumulatedResponse;
-        
+        const match = accumulatedResponse.match(/"content"\s*:\s*"([^"]*)/);
+
+        if (match && match[1]) {
+            const partialContent = match[1]; // conteúdo até agora
+            lista[lista.length - 1].content = partialContent
+            
+          }     
+
         // Atualizando o estado com a lista de mensagens (re-renderiza a UI)
         setDataChat([...lista]);
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth' // ou 'auto' se não quiser animação
+        });
+        
       }
-
     } catch (error) {
-      console.error("Erro ao fazer a requisição:", error.message);
+      //console.error("Erro ao fazer a requisição:", error.message);
     }
   };
 

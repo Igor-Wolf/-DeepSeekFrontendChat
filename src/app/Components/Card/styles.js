@@ -40,7 +40,7 @@ export const Content = styled.div`
 
     display: flex;
     flex-direction: row;
-   
+    white-space: pre-line;
     overflow-wrap: break-word;
 
 
