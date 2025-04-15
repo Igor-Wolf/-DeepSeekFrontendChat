@@ -31,10 +31,12 @@ export default function Home() {
     });
 
     const bodyValue = {
-      model: "deepseek-r1:14b",
+      //gemma3:12b
+      //deepseek-r1:14b
+      model: "gemma3:12b",
       messages: lista, // Enviando as mensagens atualizadas
       system:
-        "Responda sempre na linguagem Português do Brasil. Responda em Text",
+        "Responda sempre na linguagem Português do Brasil.",
       format: {
         type: "object",
         properties: {

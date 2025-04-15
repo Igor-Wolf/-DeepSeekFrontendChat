@@ -39,7 +39,7 @@ export const ExternalWrapper = styled.div`
 export const Content = styled.div`
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     white-space: pre-line;
     overflow-wrap: break-word;
 
