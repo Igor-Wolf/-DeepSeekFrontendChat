@@ -24,7 +24,7 @@ const Card = ({ objChat }) => {
         .replace(/^\*\s(.*)$/gm, "<li>• $1</li>")
 
         // Quebra de parágrafo (duplo \n) vira espaçamento duplo
-        .replace(/\\n{2,}/g, "<br/><br/>")
+        //.replace(/\\n{2,}/g, "<br/><br/>")
 
         // Quebra de linha simples
         .replace(/\\n/g, "<br/><br/>")

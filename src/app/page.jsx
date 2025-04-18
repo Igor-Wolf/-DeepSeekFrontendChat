@@ -1,9 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Container, Container1 } from "./styles";
+import {
+  ButtonsContainer,
+  Container,
+  Container1,
+  ExternalContainer,
+  LeftContainer,
+  RightContainer,
+} from "./styles";
 import { Card } from "./Components/Card";
 import { InputUser } from "./Components/InputUser";
+import { Button } from "./Components/Button";
 
 export default function Home() {
   const [dataChat, setDataChat] = useState([]);
@@ -27,7 +35,7 @@ export default function Home() {
     setDataChat(lista);
     window.scrollTo({
       top: document.body.scrollHeight,
-      behavior: 'smooth' // ou 'auto' se não quiser animação
+      behavior: "smooth", // ou 'auto' se não quiser animação
     });
 
     const bodyValue = {
@@ -35,8 +43,7 @@ export default function Home() {
       //deepseek-r1:14b
       model: "gemma3:12b",
       messages: lista, // Enviando as mensagens atualizadas
-      system:
-        "Responda sempre na linguagem Português do Brasil.",
+      system: "Responda sempre na linguagem Português do Brasil.",
       format: {
         type: "object",
         properties: {
@@ -84,37 +91,119 @@ export default function Home() {
         converter = JSON.parse("[" + chunk + "]");
         // Acumula a resposta recebida até o momento
         accumulatedResponse += converter[0].message.content;
-        
+
         const match = accumulatedResponse.match(/"content"\s*:\s*"([^"]*)/);
 
         if (match && match[1]) {
-            const partialContent = match[1]; // conteúdo até agora
-            lista[lista.length - 1].content = partialContent
-            
-          }     
+          const partialContent = match[1]; // conteúdo até agora
+          lista[lista.length - 1].content = partialContent;
+        }
 
         // Atualizando o estado com a lista de mensagens (re-renderiza a UI)
         setDataChat([...lista]);
         window.scrollTo({
           top: document.body.scrollHeight,
-          behavior: 'smooth' // ou 'auto' se não quiser animação
+          behavior: "smooth", // ou 'auto' se não quiser animação
         });
-        
       }
     } catch (error) {
       //console.error("Erro ao fazer a requisição:", error.message);
     }
   };
 
+  const handleClickButtonErase = () => {
+    let list = [...dataChat];
+    list.pop();
+    setDataChat([...list]);
+  };
+  const handleClickButtonDelete = () => {
+    let list = [];
+    setDataChat(list);
+  };
+
+  const handleClickButtonSave = () => {
+    const list = [...dataChat];
+    const json = JSON.stringify(list, null, 2);
+
+    // Cria um blob com o JSON
+    const blob = new Blob([json], { type: "application/json" });
+
+    // Cria uma URL pro blob
+    const url = URL.createObjectURL(blob);
+
+    // Cria um link pra forçar o download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "lista.json";
+    link.click();
+
+    // Limpa a URL criada
+    URL.revokeObjectURL(url);
+  };
+
+  const handleClickButtonImport = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target.result);
+          setDataChat(json);
+          console.log("JSON carregado:", json);
+        } catch (err) {
+          console.error("Erro ao ler JSON:", err);
+        }
+      };
+
+      reader.readAsText(file);
+    };
+
+    input.click(); // Abre o seletor de arquivos
+  };
   return (
-    <Container>
-      <Container1>
-        {/* Renderizando os cards para cada item em dataChat */}
-        {dataChat?.map((text, index) => (
-          <Card key={index} objChat={text}></Card>
-        ))}
-      </Container1>
-      <InputUser onButtonClick={handleClickButton}></InputUser>
-    </Container>
+    <ExternalContainer>
+      <LeftContainer>ola mundo</LeftContainer>
+      <Container>
+        <Container1>
+          {/* Renderizando os cards para cada item em dataChat */}
+          {dataChat?.map((text, index) => (
+            <Card key={index} objChat={text}></Card>
+          ))}
+        </Container1>
+
+        <InputUser onButtonClick={handleClickButton}></InputUser>
+      </Container>
+      <RightContainer>
+        <ButtonsContainer>
+          <Button
+            title="Erase "
+            variant="primary"
+            onClick={() => handleClickButtonErase()}
+          ></Button>
+          <Button
+            title="Delete "
+            variant="primary"
+            onClick={() => handleClickButtonDelete()}
+          ></Button>
+          <Button
+            title="Save "
+            variant="primary"
+            onClick={() => handleClickButtonSave()}
+          ></Button>
+          <Button
+            title="Import "
+            variant="primary"
+            onClick={() => handleClickButtonImport()}
+          ></Button>
+        </ButtonsContainer>
+      </RightContainer>
+    </ExternalContainer>
   );
 }
